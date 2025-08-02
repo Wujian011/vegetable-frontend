@@ -1,9 +1,8 @@
+<template>aa</template>
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
-</script>
+import { healthCheck } from '@/api/healthController.ts'
 
-<template>
-  <main>
-    <TheWelcome />
-  </main>
-</template>
+healthCheck().then((res) => {
+  console.log(res)
+})
+</script>
