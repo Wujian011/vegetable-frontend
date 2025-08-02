@@ -78,6 +78,7 @@ const onSubmit = async (values: API.UserLoginRequest) => {
     console.log('登录数据:', values)
 
     const res = await userLogin(values)
+    console.log(res.data)
     // 登录成功，把登录状态保存到全局状态中
     if (res.data.data && res.data.code === 0) {
       await loginUserStore.fetchLoginUser()

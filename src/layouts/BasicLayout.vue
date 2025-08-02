@@ -1,17 +1,23 @@
 <template>
   <div class="basic-layout">
     <!-- 顶部导航栏 -->
-    <div class="header">
+    <div class="header" v-if="!$route.meta?.hideHeader">
       <GlobalHeader />
     </div>
-    
+
     <!-- 中间内容区域 -->
-    <div class="main-content">
+    <div
+      class="main-content"
+      :class="{
+        'no-tabbar': $route.meta?.hideTabBar,
+        'no-header': $route.meta?.hideHeader,
+      }"
+    >
       <router-view />
     </div>
-    
+
     <!-- 底部标签栏 -->
-    <div class="footer">
+    <div class="footer" v-if="!$route.meta?.hideTabBar">
       <GlobalFooter />
     </div>
   </div>
@@ -39,10 +45,18 @@ import GlobalFooter from '@/components/GlobalFooter.vue'
 
 .main-content {
   flex: 1;
-  margin-top: 46px; /* 为顶部导航栏预留空间 */
-  margin-bottom: 50px; /* 为底部标签栏预留空间 */
   overflow-y: auto;
-  padding: 16px;
+  //padding: 16px;
+
+  /* 有全局header时预留顶部空间 */
+  &:not(.no-header) {
+    margin-top: 46px;
+  }
+
+  /* 有tabBar时预留底部空间 */
+  &:not(.no-tabbar) {
+    margin-bottom: 50px;
+  }
 }
 
 .footer {
@@ -52,17 +66,27 @@ import GlobalFooter from '@/components/GlobalFooter.vue'
 /* 响应式设计 */
 @media (max-width: 768px) {
   .main-content {
-    margin-top: 46px;
-    margin-bottom: 50px;
-    padding: 12px;
+
+    &:not(.no-header) {
+      margin-top: 46px;
+    }
+
+    &:not(.no-tabbar) {
+      margin-bottom: 50px;
+    }
   }
 }
 
 @media (min-width: 769px) {
   .main-content {
-    margin-top: 46px;
-    margin-bottom: 60px;
-    padding: 20px;
+
+    &:not(.no-header) {
+      margin-top: 46px;
+    }
+
+    &:not(.no-tabbar) {
+      margin-bottom: 60px;
+    }
   }
 }
 </style>

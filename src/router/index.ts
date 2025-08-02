@@ -27,6 +27,16 @@ const router = createRouter({
       name: 'register',
       component: () => import('../views/user/RegisterView.vue'),
     },
+    {
+      path: '/admin/category',
+      name: 'category',
+      component: () => import('../views/admin/CategoryView.vue'),
+      meta: {
+        hideTabBar: true, // 隐藏底部tabBar
+        hideHeader: true, // 隐藏顶部导航栏
+        title: '分类管理',
+      },
+    },
   ],
 })
 

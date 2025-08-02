@@ -1,9 +1,9 @@
 import axios from 'axios'
-import { showFailToast, showToast } from 'vant'
+import { showFailToast } from 'vant'
 
 // 创建 Axios 实例
 const myAxios = axios.create({
-  baseURL: 'http://127.0.0.1:8125/api',
+  baseURL: '/api',
   timeout: 60000,
   withCredentials: true,
 })
