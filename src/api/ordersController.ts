@@ -71,6 +71,21 @@ export async function listOrdersVoByPage(
   })
 }
 
+/** 此处后端没有提供注释 POST /orders/list/page/vo/my */
+export async function listOrdersVoPageByMy(
+  body: API.OrdersQueryRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponsePageOrdersVO>('/orders/list/page/vo/my', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
 /** 此处后端没有提供注释 POST /orders/update */
 export async function updateOrders(
   body: API.OrdersUpdateRequest,

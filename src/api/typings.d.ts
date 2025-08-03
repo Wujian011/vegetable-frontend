@@ -251,19 +251,6 @@ declare namespace API {
     updateTime?: string
   }
 
-  type OrderDetails = {
-    id?: number
-    orderId?: number
-    dishesId?: number
-    price?: number
-    number?: number
-    userId?: number
-    editTime?: string
-    createTime?: string
-    updateTime?: string
-    isDelete?: number
-  }
-
   type OrderDetailsVO = {
     id?: number
     dishesVO?: DishesVO
@@ -302,6 +289,7 @@ declare namespace API {
     sortOrder?: string
     id?: number
     price?: number
+    userId?: number
   }
 
   type OrdersUpdateRequest = {
@@ -313,7 +301,7 @@ declare namespace API {
     id?: number
     dishesId?: number
     price?: number
-    orderDetailsList?: OrderDetails[]
+    orderDetailsVOList?: OrderDetailsVO[]
   }
 
   type PageClassificationVO = {
