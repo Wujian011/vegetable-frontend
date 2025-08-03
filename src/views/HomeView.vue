@@ -38,7 +38,10 @@
       </div>
 
       <!-- 右侧菜品列表 -->
-      <div class="dishes-content" :class="{ 'has-admin-bar': isAdmin }">
+      <div
+        class="dishes-content"
+        :class="{ 'has-admin-bar': isAdmin, 'has-cart-bar': !isAdmin && cartItems.length > 0 }"
+      >
         <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了">
           <div class="dishes-grid">
             <div v-for="dish in dishes" :key="dish.id" class="dish-item">
@@ -108,6 +111,32 @@
       </div>
     </div>
 
+    <!-- 用户：购物车管理底部栏 -->
+    <div v-if="!isAdmin" class="cart-bottom-bar">
+      <div class="cart-info">
+        <van-icon name="shopping-cart-o" size="20" />
+        <div class="info-details">
+          <span class="cart-count">已选 {{ cartItems.length }} 件商品</span>
+          <span class="cart-total">合计: ¥{{ cartTotalPrice }}</span>
+        </div>
+      </div>
+      <div class="cart-actions">
+        <van-button
+          type="default"
+          round
+          size="small"
+          @click="clearCart"
+          class="cart-action-btn"
+          :disabled="cartItems.length === 0"
+        >
+          清空购物车
+        </van-button>
+        <van-button type="primary" round size="small" @click="goToCart" class="cart-action-btn">
+          去结算
+        </van-button>
+      </div>
+    </div>
+
     <!-- 菜品详情弹窗 -->
     <van-popup v-model:show="showDetail" position="bottom" :style="{ height: '60%' }" round>
       <div class="dish-detail" v-if="selectedDish">
@@ -167,6 +196,18 @@ const pageSize = ref(10)
 // 菜品详情
 const showDetail = ref(false)
 const selectedDish = ref<API.DishesVO | null>(null)
+
+// 购物车相关
+const cartItems = ref<Array<API.DishesVO & { quantity: number }>>([])
+
+// 计算购物车总价
+const cartTotalPrice = computed(() => {
+  return cartItems.value
+    .reduce((total, item) => {
+      return total + (item.price || 0) * item.quantity
+    }, 0)
+    .toFixed(2)
+})
 
 // 当前分类信息
 const currentCategoryInfo = computed(() => {
@@ -288,10 +329,42 @@ const showDishDetail = (dish: API.DishesVO) => {
   showDetail.value = true
 }
 
-// 添加到购物车（简化版）
+// 添加到购物车
 const addToCart = (dish: API.DishesVO) => {
-  showToast(`已将"${dish.name}"添加到购物车`)
-  // 这里可以根据需要调用实际的API
+  const existingItem = cartItems.value.find((item) => item.id === dish.id)
+
+  if (existingItem) {
+    // 如果商品已存在，增加数量
+    existingItem.quantity += 1
+    showToast(`"${dish.name}"数量已增加`)
+  } else {
+    // 如果商品不存在，添加新商品
+    cartItems.value.push({
+      ...dish,
+      quantity: 1,
+    })
+    showToast(`已将"${dish.name}"添加到购物车`)
+  }
+}
+
+// 清空购物车
+const clearCart = async () => {
+  try {
+    await showConfirmDialog({
+      title: '确认清空',
+      message: '确定要清空购物车吗？',
+    })
+
+    cartItems.value = []
+    showToast('购物车已清空')
+  } catch {
+    // 用户取消操作
+  }
+}
+
+// 跳转到购物车页面
+const goToCart = () => {
+  router.push('/cart')
 }
 
 // 管理员功能：跳转到新增菜品页面
@@ -387,6 +460,11 @@ onMounted(async () => {
   &.has-admin-bar {
     padding-bottom: calc(16px + 80px); // 原有padding + 管理员底部栏高度
   }
+
+  // 用户购物车模式下为底部栏预留空间
+  &.has-cart-bar {
+    padding-bottom: calc(16px + 80px); // 原有padding + 购物车底部栏高度
+  }
 }
 
 .dishes-grid {
@@ -440,6 +518,58 @@ onMounted(async () => {
   left: 0;
   right: 0;
   z-index: 999; // 低于tabbar的z-index
+}
+
+// 用户：购物车管理底部栏
+.cart-bottom-bar {
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 50px; // 为tabbar预留空间
+  left: 0;
+  right: 0;
+  z-index: 999; // 低于tabbar的z-index
+}
+
+.cart-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .info-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cart-count {
+    font-size: 14px;
+    color: #1f2937;
+    font-weight: 600;
+  }
+
+  .cart-total {
+    font-size: 12px;
+    color: #ef4444;
+    font-weight: 600;
+  }
+}
+
+.cart-actions {
+  display: flex;
+  gap: 12px;
+
+  .cart-action-btn {
+    min-width: 80px;
+    height: 36px;
+    font-size: 14px;
+    font-weight: 600;
+  }
 }
 
 .admin-info {
@@ -573,9 +703,19 @@ onMounted(async () => {
     }
   }
 
-  .admin-bottom-bar {
+  .cart-actions {
+    gap: 8px;
+
+    .cart-action-btn {
+      flex: 1;
+      min-width: 70px;
+      font-size: 12px;
+    }
+  }
+
+  .admin-bottom-bar,
+  .cart-bottom-bar {
     bottom: 50px; // 移动端tabbar高度
-    //flex-direction: column;
     gap: 12px;
     align-items: stretch;
   }
@@ -583,7 +723,8 @@ onMounted(async () => {
 
 // 大屏幕下的底部栏适配
 @media (min-width: 769px) {
-  .admin-bottom-bar {
+  .admin-bottom-bar,
+  .cart-bottom-bar {
     bottom: 60px; // 桌面端tabbar高度
   }
 }
