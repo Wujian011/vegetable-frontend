@@ -29,7 +29,7 @@
             </div>
           </div>
           <div class="edit-action">
-            <van-icon name="edit" size="20" color="#666" @click="editUserInfo" />
+            <van-icon name="edit" size="20" color="rgba(255,255,255,0.8)" @click="editUserInfo" />
           </div>
         </div>
 
@@ -237,29 +237,30 @@ onMounted(async () => {
 <style scoped lang="scss">
 .profile-page {
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: var(--bg-color);
   display: flex;
   flex-direction: column;
 }
 
 .profile-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
 }
 
 // 用户信息卡片
 .user-info-section {
-  padding: 16px;
+  padding: var(--spacing-lg);
   padding-bottom: 0;
 }
 
 .user-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
-  padding: 24px;
-  color: white;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  color: var(--text-white);
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-lg);
 
   &::before {
     content: '';
@@ -277,10 +278,10 @@ onMounted(async () => {
 .user-main-info {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--spacing-lg);
   position: relative;
   z-index: 1;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-lg);
 }
 
 .user-avatar {
@@ -350,37 +351,44 @@ onMounted(async () => {
 // 功能菜单
 .menu-section {
   flex: 1;
-  padding: 16px;
-  padding-bottom: 70px; // 为tabbar预留空间
+  padding: var(--spacing-lg);
+  padding-bottom: 70px;
 
   :deep(.van-cell-group) {
-    margin-bottom: 16px;
-    border-radius: 12px;
+    margin-bottom: var(--spacing-lg);
+    border-radius: var(--radius-lg);
     overflow: hidden;
+    box-shadow: var(--shadow-sm);
   }
 
   :deep(.van-cell) {
-    padding: 16px;
+    padding: var(--spacing-lg);
     font-size: 16px;
+    background: var(--bg-card);
 
     .van-cell__title {
       font-weight: 500;
+      color: var(--text-primary);
     }
 
     .van-icon {
-      margin-right: 12px;
-      color: #666;
+      margin-right: var(--spacing-md);
+      color: var(--primary-color);
+    }
+
+    &:hover {
+      background: var(--gray-50);
     }
   }
 }
 
 .logout-cell {
   :deep(.van-cell__title) {
-    color: #ee0a24;
+    color: var(--danger-color);
   }
 
   :deep(.van-icon) {
-    color: #ee0a24;
+    color: var(--danger-color);
   }
 }
 
@@ -389,12 +397,12 @@ onMounted(async () => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #f8f9fa;
+  background: var(--bg-color);
 }
 
 .dialog-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .dialog-content {

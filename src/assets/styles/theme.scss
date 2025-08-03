@@ -1,0 +1,160 @@
+// 粉色主题配色方案
+:root {
+  // 主色调 - 粉色系
+  --primary-color: #ff69b4;
+  --primary-light: #ffb6db;
+  --primary-dark: #e8568c;
+  --primary-gradient: linear-gradient(135deg, #ff9eb5 0%, #ff69b4 100%);
+
+  // 辅助色 - 暖粉色系
+  --secondary-color: #ffb3d1;
+  --secondary-light: #ffe0f0;
+  --secondary-dark: #ff8cb3;
+
+  // 渐变色
+  --gradient-primary: linear-gradient(135deg, #ff9eb5 0%, #ff69b4 50%, #e8568c 100%);
+  --gradient-light: linear-gradient(135deg, #ffe0f0 0%, #ffb3d1 100%);
+  --gradient-card: linear-gradient(135deg, #ff9eb5 0%, #ffb6db 100%);
+
+  // 中性色
+  --white: #ffffff;
+  --gray-50: #fdf8fb;
+  --gray-100: #f9f0f5;
+  --gray-200: #f0e1ea;
+  --gray-300: #e6d2de;
+  --gray-400: #c4a4b8;
+  --gray-500: #a37690;
+  --gray-600: #824968;
+  --gray-700: #613549;
+  --gray-800: #40222a;
+  --gray-900: #1f0e15;
+
+  // 功能色
+  --success-color: #52c41a;
+  --warning-color: #faad14;
+  --danger-color: #ff4d4f;
+  --info-color: var(--primary-color);
+
+  // 背景色
+  --bg-color: var(--gray-50);
+  --bg-card: var(--white);
+  --bg-secondary: var(--gray-100);
+
+  // 文本色
+  --text-primary: var(--gray-900);
+  --text-secondary: var(--gray-600);
+  --text-tertiary: var(--gray-400);
+  --text-white: var(--white);
+
+  // 边框色
+  --border-color: var(--gray-200);
+  --border-light: var(--gray-100);
+
+  // 阴影
+  --shadow-sm: 0 1px 2px rgba(255, 105, 180, 0.1);
+  --shadow-md: 0 4px 6px rgba(255, 105, 180, 0.15);
+  --shadow-lg: 0 10px 15px rgba(255, 105, 180, 0.2);
+  --shadow-xl: 0 20px 25px rgba(255, 105, 180, 0.25);
+
+  // 圆角
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+
+  // 间距
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-2xl: 24px;
+  --spacing-3xl: 32px;
+}
+
+// 全局样式重置和基础样式
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// 通用工具类
+.text-primary {
+  color: var(--primary-color);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
+.text-white {
+  color: var(--text-white);
+}
+
+.bg-primary {
+  background-color: var(--primary-color);
+}
+.bg-gradient {
+  background: var(--gradient-primary);
+}
+.bg-card {
+  background-color: var(--bg-card);
+}
+
+.rounded-sm {
+  border-radius: var(--radius-sm);
+}
+.rounded-md {
+  border-radius: var(--radius-md);
+}
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+.rounded-xl {
+  border-radius: var(--radius-xl);
+}
+.rounded-full {
+  border-radius: var(--radius-full);
+}
+
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+// Vant组件主题定制
+:root {
+  --van-primary-color: var(--primary-color);
+  --van-success-color: var(--success-color);
+  --van-danger-color: var(--danger-color);
+  --van-warning-color: var(--warning-color);
+  --van-info-color: var(--info-color);
+  --van-background-color: var(--bg-color);
+  --van-background-2: var(--bg-secondary);
+  --van-text-color: var(--text-primary);
+  --van-text-color-2: var(--text-secondary);
+  --van-text-color-3: var(--text-tertiary);
+  --van-border-color: var(--border-color);
+  --van-active-color: var(--gray-100);
+  --van-active-opacity: 0.1;
+  --van-radius-sm: var(--radius-sm);
+  --van-radius-md: var(--radius-md);
+  --van-radius-lg: var(--radius-lg);
+}

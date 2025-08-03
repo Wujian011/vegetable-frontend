@@ -242,14 +242,14 @@ onMounted(async () => {
 <style scoped lang="scss">
 .orders-page {
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: var(--bg-color);
   display: flex;
   flex-direction: column;
 }
 
 .orders-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .orders-content {
@@ -266,19 +266,21 @@ onMounted(async () => {
 }
 
 .orders-list {
-  padding: 16px;
+  padding: var(--spacing-lg);
 }
 
 .order-item {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-lg);
 
   :deep(.van-card) {
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    transition: box-shadow 0.2s;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: all 0.2s ease;
+    background: var(--bg-card);
 
     &:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
     }
   }
 }
@@ -287,17 +289,17 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-sm);
 
   .order-number {
     font-size: 14px;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-primary);
   }
 
   .order-time {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--text-secondary);
   }
 }
 
@@ -379,12 +381,12 @@ onMounted(async () => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #f8f9fa;
+  background: var(--bg-color);
 }
 
 .popup-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .popup-content {

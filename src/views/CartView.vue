@@ -292,14 +292,14 @@ onMounted(() => {
 <style scoped lang="scss">
 .cart-page {
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: var(--bg-color);
   display: flex;
   flex-direction: column;
 }
 
 .cart-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .cart-content {
@@ -323,12 +323,14 @@ onMounted(() => {
 }
 
 .cart-item {
-  background: white;
-  padding: 16px;
-  margin-bottom: 8px;
+  background: var(--bg-card);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 
   .item-image {
     flex-shrink: 0;
@@ -341,7 +343,7 @@ onMounted(() => {
     .item-name {
       font-size: 16px;
       font-weight: 600;
-      color: #1f2937;
+      color: var(--text-primary);
       margin-bottom: 4px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -350,7 +352,7 @@ onMounted(() => {
 
     .item-material {
       font-size: 12px;
-      color: #6b7280;
+      color: var(--text-secondary);
       margin-bottom: 6px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -360,7 +362,7 @@ onMounted(() => {
     .item-price {
       font-size: 16px;
       font-weight: 600;
-      color: #ef4444;
+      color: var(--primary-color);
     }
   }
 
@@ -376,16 +378,16 @@ onMounted(() => {
 
 .checkout-bar {
   position: fixed;
-  bottom: 50px; // 为tabbar预留空间
+  bottom: 50px;
   left: 0;
   right: 0;
-  background: white;
-  border-top: 1px solid #e5e7eb;
-  padding: 16px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-color);
+  padding: var(--spacing-lg);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-lg);
   z-index: 999;
 }
 
@@ -432,12 +434,12 @@ onMounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #f8f9fa;
+  background: var(--bg-color);
 }
 
 .popup-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .popup-content {
@@ -527,9 +529,9 @@ onMounted(() => {
 }
 
 .popup-footer {
-  background: white;
-  padding: 16px;
-  border-top: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  padding: var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
 }
 
 // 响应式设计

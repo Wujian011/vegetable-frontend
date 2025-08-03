@@ -63,8 +63,9 @@ watch(
 
 <style scoped>
 .global-footer {
-  background-color: #fff;
-  border-top: 1px solid #ebedf0;
+  background-color: var(--bg-card);
+  border-top: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
 }
 
 /* 确保标签栏在最底部 */

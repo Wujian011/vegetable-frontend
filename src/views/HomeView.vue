@@ -7,7 +7,7 @@
         placeholder="搜索菜品名称"
         @search="onSearch"
         @clear="onClear"
-        background="#f8f8f8"
+        background="var(--gray-100)"
         shape="round"
       />
     </div>
@@ -416,13 +416,13 @@ onMounted(async () => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
+  background-color: var(--bg-color);
 }
 
 .search-section {
-  padding: 16px;
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-lg);
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .main-content {
@@ -433,101 +433,117 @@ onMounted(async () => {
 
 .category-sidebar {
   width: 100px;
-  background: white;
-  border-right: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
 
   .add-category-button {
-    margin: 12px 8px 8px;
+    margin: var(--spacing-md) var(--spacing-sm) var(--spacing-sm);
     font-size: 12px;
     height: 32px;
+    background: var(--gradient-primary);
+    border: none;
+    color: var(--text-white);
   }
 }
 
 .dishes-content {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  padding: var(--spacing-lg);
 
   // 管理员模式下为底部栏预留空间
   &.has-admin-bar {
-    padding-bottom: calc(16px + 80px); // 原有padding + 管理员底部栏高度
+    padding-bottom: calc(var(--spacing-lg) + 80px);
   }
 
   // 用户购物车模式下为底部栏预留空间
   &.has-cart-bar {
-    padding-bottom: calc(16px + 80px); // 原有padding + 购物车底部栏高度
+    padding-bottom: calc(var(--spacing-lg) + 80px);
   }
 }
 
 .dishes-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: var(--spacing-lg);
 }
 
 .dish-item {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-lg);
 
   .van-card {
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    transition:
-      box-shadow 0.2s,
-      transform 0.2s;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: all 0.2s ease;
+    background: var(--bg-card);
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--shadow-lg);
     }
   }
 
   .admin-actions {
     display: flex;
-    gap: 8px;
+    gap: var(--spacing-sm);
     justify-content: flex-end;
-    margin-top: 8px;
+    margin-top: var(--spacing-sm);
+
+    .van-button {
+      background: var(--gradient-primary);
+      border: none;
+      color: var(--text-white);
+      border-radius: var(--radius-md);
+    }
   }
 
   .user-actions {
     display: flex;
-    gap: 8px;
+    gap: var(--spacing-sm);
     justify-content: flex-end;
-    margin-top: 8px;
+    margin-top: var(--spacing-sm);
+
+    .van-button {
+      background: var(--gradient-primary);
+      border: none;
+      color: var(--text-white);
+      border-radius: var(--radius-md);
+    }
   }
 }
 
 // 管理员：底部管理栏
 .admin-bottom-bar {
-  background: white;
-  border-top: 1px solid #e5e7eb;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
-  padding: 16px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-lg);
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: fixed;
-  bottom: 50px; // 为tabbar预留空间
+  bottom: 50px;
   left: 0;
   right: 0;
-  z-index: 999; // 低于tabbar的z-index
+  z-index: 999;
 }
 
 // 用户：购物车管理底部栏
 .cart-bottom-bar {
-  background: white;
-  border-top: 1px solid #e5e7eb;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
-  padding: 16px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-lg);
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: fixed;
-  bottom: 50px; // 为tabbar预留空间
+  bottom: 50px;
   left: 0;
   right: 0;
-  z-index: 999; // 低于tabbar的z-index
+  z-index: 999;
 }
 
 .cart-info {
@@ -569,7 +585,7 @@ onMounted(async () => {
 .admin-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
 
   .info-details {
     display: flex;
@@ -579,26 +595,30 @@ onMounted(async () => {
 
   .dish-count {
     font-size: 14px;
-    color: #1f2937;
+    color: var(--text-primary);
     font-weight: 600;
   }
 
   .search-info {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--text-secondary);
     font-weight: 400;
   }
 }
 
 .admin-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-md);
 
   .admin-action-btn {
     min-width: 80px;
     height: 36px;
     font-size: 14px;
     font-weight: 600;
+    background: var(--gradient-primary);
+    border: none;
+    color: var(--text-white);
+    border-radius: var(--radius-md);
   }
 }
 
@@ -607,12 +627,12 @@ onMounted(async () => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #f8f9fa;
+  background: var(--bg-color);
 }
 
 .detail-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .detail-content {
@@ -629,46 +649,51 @@ onMounted(async () => {
 }
 
 .detail-info {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
 
   h3 {
     font-size: 20px;
     font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 12px;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
   }
 
   .detail-material {
     font-size: 14px;
-    color: #6b7280;
+    color: var(--text-secondary);
     line-height: 1.5;
-    margin-bottom: 16px;
+    margin-bottom: var(--spacing-lg);
   }
 
   .detail-price {
     font-size: 24px;
     font-weight: 700;
-    color: #ef4444;
+    color: var(--primary-color);
   }
 }
 
 .detail-actions {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
 
   .van-button {
     flex: 1;
     height: 44px;
     font-size: 16px;
     font-weight: 600;
+    background: var(--gradient-primary);
+    border: none;
+    color: var(--text-white);
   }
 }
 

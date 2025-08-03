@@ -7,6 +7,9 @@ import router from './router'
 // 导入Vant样式
 import 'vant/lib/index.css'
 
+// 导入主题样式
+import '@/assets/styles/theme.scss'
+
 const app = createApp(App)
 
 app.use(createPinia())
