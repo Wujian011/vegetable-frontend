@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 
@@ -51,8 +51,14 @@ const onChange = (name: string) => {
   // 路由跳转由 van-tabbar-item 的 to 属性自动处理
 }
 
-// 初始化激活状态
-updateActiveTab()
+// 监听路由变化
+watch(
+  () => route.path,
+  () => {
+    updateActiveTab()
+  },
+  { immediate: true },
+)
 </script>
 
 <style scoped>
