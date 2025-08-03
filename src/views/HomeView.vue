@@ -38,7 +38,7 @@
       </div>
 
       <!-- 右侧菜品列表 -->
-      <div class="dishes-content">
+      <div class="dishes-content" :class="{ 'has-admin-bar': isAdmin }">
         <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了">
           <div class="dishes-grid">
             <div v-for="dish in dishes" :key="dish.id" class="dish-item">
@@ -382,6 +382,11 @@ onMounted(async () => {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
+
+  // 管理员模式下为底部栏预留空间
+  &.has-admin-bar {
+    padding-bottom: calc(16px + 80px); // 原有padding + 管理员底部栏高度
+  }
 }
 
 .dishes-grid {
@@ -430,6 +435,11 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: fixed;
+  bottom: 50px; // 为tabbar预留空间
+  left: 0;
+  right: 0;
+  z-index: 999; // 低于tabbar的z-index
 }
 
 .admin-info {
@@ -564,9 +574,17 @@ onMounted(async () => {
   }
 
   .admin-bottom-bar {
+    bottom: 50px; // 移动端tabbar高度
     //flex-direction: column;
     gap: 12px;
     align-items: stretch;
+  }
+}
+
+// 大屏幕下的底部栏适配
+@media (min-width: 769px) {
+  .admin-bottom-bar {
+    bottom: 60px; // 桌面端tabbar高度
   }
 }
 
