@@ -1,3 +1,4 @@
+// @ts-ignore
 /* eslint-disable */
 import request from '@/request'
 
@@ -29,7 +30,7 @@ export async function deleteDishes(body: API.DeleteRequest, options?: { [key: st
 export async function getDishesById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getDishesByIdParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<API.BaseResponseDishes>('/dishes/get', {
     method: 'GET',
@@ -44,7 +45,7 @@ export async function getDishesById(
 export async function getDishesVoById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getDishesVOByIdParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<API.BaseResponseDishesVO>('/dishes/get/vo', {
     method: 'GET',
@@ -58,7 +59,7 @@ export async function getDishesVoById(
 /** 此处后端没有提供注释 POST /dishes/list/page/vo */
 export async function listDishesVoByPage(
   body: API.DishesQueryRequest,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<API.BaseResponsePageDishesVO>('/dishes/list/page/vo', {
     method: 'POST',
@@ -73,7 +74,7 @@ export async function listDishesVoByPage(
 /** 此处后端没有提供注释 POST /dishes/update */
 export async function updateDishes(
   body: API.DishesUpdateRequest,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<API.BaseResponseBoolean>('/dishes/update', {
     method: 'POST',

@@ -28,6 +28,15 @@ const router = createRouter({
       component: () => import('../views/user/RegisterView.vue'),
     },
     {
+      path: '/cart',
+      name: 'cart',
+      component: () => import('../views/CartView.vue'),
+      meta: {
+        hideHeader: true, // 隐藏顶部导航栏
+        title: '购物车',
+      },
+    },
+    {
       path: '/admin/category',
       name: 'category',
       component: () => import('../views/admin/CategoryView.vue'),

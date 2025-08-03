@@ -168,11 +168,13 @@ import { showToast, showConfirmDialog } from 'vant'
 import { getClassificationItem } from '@/api/classificationController'
 import { listDishesVoByPage, deleteDishes } from '@/api/dishesController'
 import { useLoginUserStore } from '@/stores/loginUser'
+import { useCartStore } from '@/stores/cart'
 
 const router = useRouter()
 
 // 用户状态
 const loginUserStore = useLoginUserStore()
+const cartStore = useCartStore()
 
 // 计算是否为管理员
 const isAdmin = computed(() => {
@@ -197,17 +199,9 @@ const pageSize = ref(10)
 const showDetail = ref(false)
 const selectedDish = ref<API.DishesVO | null>(null)
 
-// 购物车相关
-const cartItems = ref<Array<API.DishesVO & { quantity: number }>>([])
-
-// 计算购物车总价
-const cartTotalPrice = computed(() => {
-  return cartItems.value
-    .reduce((total, item) => {
-      return total + (item.price || 0) * item.quantity
-    }, 0)
-    .toFixed(2)
-})
+// 购物车相关（使用store）
+const cartItems = computed(() => cartStore.cartItems)
+const cartTotalPrice = computed(() => cartStore.cartTotalPrice)
 
 // 当前分类信息
 const currentCategoryInfo = computed(() => {
@@ -331,20 +325,16 @@ const showDishDetail = (dish: API.DishesVO) => {
 
 // 添加到购物车
 const addToCart = (dish: API.DishesVO) => {
-  const existingItem = cartItems.value.find((item) => item.id === dish.id)
+  const result = cartStore.addToCart(dish)
 
-  if (existingItem) {
-    // 如果商品已存在，增加数量
-    existingItem.quantity += 1
-    showToast(`"${dish.name}"数量已增加`)
-  } else {
-    // 如果商品不存在，添加新商品
-    cartItems.value.push({
-      ...dish,
-      quantity: 1,
-    })
+  if (result.isNew) {
     showToast(`已将"${dish.name}"添加到购物车`)
+  } else {
+    showToast(`"${dish.name}"数量已增加`)
   }
+
+  // 保存到本地存储
+  cartStore.saveToLocalStorage()
 }
 
 // 清空购物车
@@ -355,7 +345,8 @@ const clearCart = async () => {
       message: '确定要清空购物车吗？',
     })
 
-    cartItems.value = []
+    cartStore.clearCart()
+    cartStore.saveToLocalStorage()
     showToast('购物车已清空')
   } catch {
     // 用户取消操作
@@ -412,6 +403,9 @@ const goToSortDish = () => {
 
 // 页面初始化
 onMounted(async () => {
+  // 加载购物车数据
+  cartStore.loadFromLocalStorage()
+
   await loadCategories()
   await loadDishes()
 })

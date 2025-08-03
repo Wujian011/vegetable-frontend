@@ -3,16 +3,18 @@
 // API 更新时间：
 // API 唯一标识：
 import * as shoppingCartController from './shoppingCartController'
-import * as orderDetailsController from './orderDetailsController'
 import * as userController from './userController'
+import * as ordersController from './ordersController'
 import * as dishesController from './dishesController'
 import * as classificationController from './classificationController'
+import * as orderDetailsController from './orderDetailsController'
 import * as healthController from './healthController'
 export default {
   shoppingCartController,
-  orderDetailsController,
   userController,
+  ordersController,
   dishesController,
   classificationController,
+  orderDetailsController,
   healthController,
 }

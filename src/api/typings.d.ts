@@ -35,6 +35,12 @@ declare namespace API {
     message?: string
   }
 
+  type BaseResponseListOrderDetailsVO = {
+    code?: number
+    data?: OrderDetailsVO[]
+    message?: string
+  }
+
   type BaseResponseLoginUserVO = {
     code?: number
     data?: LoginUserVO
@@ -47,6 +53,18 @@ declare namespace API {
     message?: string
   }
 
+  type BaseResponseOrders = {
+    code?: number
+    data?: Orders
+    message?: string
+  }
+
+  type BaseResponseOrdersVO = {
+    code?: number
+    data?: OrdersVO
+    message?: string
+  }
+
   type BaseResponsePageClassificationVO = {
     code?: number
     data?: PageClassificationVO
@@ -56,6 +74,12 @@ declare namespace API {
   type BaseResponsePageDishesVO = {
     code?: number
     data?: PageDishesVO
+    message?: string
+  }
+
+  type BaseResponsePageOrdersVO = {
+    code?: number
+    data?: PageOrdersVO
     message?: string
   }
 
@@ -192,11 +216,19 @@ declare namespace API {
     id: number
   }
 
-  type getInfo1Params = {
+  type getInfoParams = {
     id: number
   }
 
-  type getInfoParams = {
+  type getOrderDetailsByOrderIdParams = {
+    orderId: number
+  }
+
+  type getOrdersByIdParams = {
+    id: number
+  }
+
+  type getOrdersVOByIdParams = {
     id: number
   }
 
@@ -221,17 +253,67 @@ declare namespace API {
 
   type OrderDetails = {
     id?: number
+    orderId?: number
     dishesId?: number
     price?: number
     number?: number
+    userId?: number
     editTime?: string
     createTime?: string
     updateTime?: string
     isDelete?: number
   }
 
-  type page1Params = {
-    page: PageOrderDetails
+  type OrderDetailsVO = {
+    id?: number
+    dishesVO?: DishesVO
+    price?: number
+    number?: number
+    editTime?: string
+    createTime?: string
+  }
+
+  type Orders = {
+    id?: number
+    orderNumber?: string
+    price?: number
+    userId?: number
+    editTime?: string
+    createTime?: string
+    updateTime?: string
+    isDelete?: number
+  }
+
+  type OrdersAddRequest = {
+    price?: number
+    ordersDetailsAddRequestList?: OrdersDetailsAddRequest[]
+  }
+
+  type OrdersDetailsAddRequest = {
+    dishesId?: number
+    price?: number
+    number?: number
+  }
+
+  type OrdersQueryRequest = {
+    pageNum?: number
+    pageSize?: number
+    sortField?: string
+    sortOrder?: string
+    id?: number
+    price?: number
+  }
+
+  type OrdersUpdateRequest = {
+    id?: number
+    price?: number
+  }
+
+  type OrdersVO = {
+    id?: number
+    dishesId?: number
+    price?: number
+    orderDetailsList?: OrderDetails[]
   }
 
   type PageClassificationVO = {
@@ -252,8 +334,8 @@ declare namespace API {
     optimizeCountQuery?: boolean
   }
 
-  type PageOrderDetails = {
-    records?: OrderDetails[]
+  type PageOrdersVO = {
+    records?: OrdersVO[]
     pageNumber?: number
     pageSize?: number
     totalPage?: number
@@ -281,10 +363,6 @@ declare namespace API {
     totalPage?: number
     totalRow?: number
     optimizeCountQuery?: boolean
-  }
-
-  type remove1Params = {
-    id: number
   }
 
   type removeParams = {
