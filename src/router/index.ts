@@ -46,6 +46,15 @@ const router = createRouter({
       },
     },
     {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('../views/ProfileView.vue'),
+      meta: {
+        hideHeader: true, // 隐藏顶部导航栏
+        title: '个人中心',
+      },
+    },
+    {
       path: '/admin/category',
       name: 'category',
       component: () => import('../views/admin/CategoryView.vue'),

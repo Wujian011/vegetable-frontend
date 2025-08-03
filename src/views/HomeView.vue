@@ -702,7 +702,7 @@ onMounted(async () => {
 
     .cart-action-btn {
       flex: 1;
-      min-width: 70px;
+      min-width: 80px;
       font-size: 12px;
     }
   }
