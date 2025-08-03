@@ -2,7 +2,7 @@
   <van-tabbar v-model="active" class="global-footer" fixed placeholder @change="onChange">
     <van-tabbar-item icon="wap-home-o" name="home" to="/"> 首页 </van-tabbar-item>
 
-    <van-tabbar-item icon="apps-o" name="category" to="/category"> 分类 </van-tabbar-item>
+    <van-tabbar-item icon="orders-o" name="orders" to="/orders"> 订单 </van-tabbar-item>
 
     <van-tabbar-item
       icon="shopping-cart-o"
@@ -19,10 +19,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 
-const router = useRouter()
 const route = useRoute()
 const cartStore = useCartStore()
 
@@ -37,8 +36,8 @@ const updateActiveTab = () => {
   const path = route.path
   if (path === '/') {
     active.value = 'home'
-  } else if (path.startsWith('/category')) {
-    active.value = 'category'
+  } else if (path.startsWith('/orders')) {
+    active.value = 'orders'
   } else if (path.startsWith('/cart')) {
     active.value = 'cart'
   } else if (path.startsWith('/profile')) {

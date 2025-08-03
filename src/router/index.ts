@@ -37,6 +37,15 @@ const router = createRouter({
       },
     },
     {
+      path: '/orders',
+      name: 'orders',
+      component: () => import('../views/OrdersView.vue'),
+      meta: {
+        hideHeader: true, // 隐藏顶部导航栏
+        title: '我的订单',
+      },
+    },
+    {
       path: '/admin/category',
       name: 'category',
       component: () => import('../views/admin/CategoryView.vue'),
