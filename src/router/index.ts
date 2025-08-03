@@ -37,6 +37,36 @@ const router = createRouter({
         title: '分类管理',
       },
     },
+    {
+      path: '/admin/dish/add',
+      name: 'dishAdd',
+      component: () => import('../views/admin/DishManageView.vue'),
+      meta: {
+        hideTabBar: true,
+        hideHeader: true,
+        title: '新增菜品',
+      },
+    },
+    {
+      path: '/admin/dish/edit',
+      name: 'dishEdit',
+      component: () => import('../views/admin/DishManageView.vue'),
+      meta: {
+        hideTabBar: true,
+        hideHeader: true,
+        title: '编辑菜品',
+      },
+    },
+    {
+      path: '/admin/dish/sort',
+      name: 'dishSort',
+      component: () => import('../views/admin/DishSortView.vue'),
+      meta: {
+        hideTabBar: true,
+        hideHeader: true,
+        title: '菜谱排序',
+      },
+    },
   ],
 })
 
