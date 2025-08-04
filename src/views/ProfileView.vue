@@ -10,7 +10,7 @@
       <div class="user-card">
         <!-- 用户头像和基本信息 -->
         <div class="user-main-info">
-          <div class="user-avatar">
+          <div class="user-avatar" @click="editUserInfo">
             <van-image
               :src="getUserAvatar(userInfo.userAvatar)"
               fit="cover"
@@ -18,6 +18,9 @@
               width="80"
               height="80"
             />
+            <div class="avatar-edit-overlay">
+              <van-icon name="edit" size="20" />
+            </div>
           </div>
           <div class="user-details">
             <div class="user-name">{{ userInfo.userName || '未设置昵称' }}</div>
@@ -88,11 +91,44 @@
                 maxlength="200"
                 show-word-limit
               />
-              <van-field
-                v-model="editForm.userAvatar"
-                label="头像链接"
-                placeholder="请输入头像图片链接"
-              />
+
+              <!-- 头像上传 -->
+              <van-cell title="头像">
+                <template #value>
+                  <div class="avatar-upload-container">
+                    <!-- 当前头像预览 -->
+                    <div class="current-avatar">
+                      <van-image
+                        :src="getUserAvatar(editForm.userAvatar)"
+                        fit="cover"
+                        round
+                        width="60"
+                        height="60"
+                      />
+                    </div>
+
+                    <!-- 上传按钮 -->
+                    <van-uploader
+                      :after-read="handleDialogAvatarUpload"
+                      accept="image/*"
+                      :max-size="5 * 1024 * 1024"
+                      :max-count="1"
+                      :show-upload="false"
+                    >
+                      <van-button
+                        type="primary"
+                        size="small"
+                        :loading="uploadingAvatar"
+                        plain
+                        icon="photo-o"
+                        :disabled="uploadingAvatar"
+                      >
+                        {{ uploadingAvatar ? '上传中...' : '更换头像' }}
+                      </van-button>
+                    </van-uploader>
+                  </div>
+                </template>
+              </van-cell>
             </van-cell-group>
 
             <div class="form-footer">
@@ -112,7 +148,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast, showConfirmDialog } from 'vant'
 import { useLoginUserStore } from '@/stores/loginUser'
-import { updateUser, userLogout } from '@/api/userController'
+import { editeUser, updateUser, userLogout } from '@/api/userController'
+import { upload } from '@/api/fileController'
 
 const router = useRouter()
 const loginUserStore = useLoginUserStore()
@@ -124,6 +161,9 @@ const userInfo = computed(() => loginUserStore.loginUser)
 const showEditDialog = ref(false)
 const updating = ref(false)
 
+// 头像上传状态
+const uploadingAvatar = ref(false)
+
 // 编辑表单
 const editForm = ref({
   userName: '',
@@ -134,6 +174,56 @@ const editForm = ref({
 // 获取用户头像
 const getUserAvatar = (avatar?: string) => {
   return avatar || 'https://via.placeholder.com/80x80?text=头像'
+}
+
+// 编辑弹窗中的头像上传处理
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handleDialogAvatarUpload = async (items: any) => {
+  uploadingAvatar.value = true
+
+  try {
+    // 获取文件对象
+    const fileItem = Array.isArray(items) ? items[0] : items
+    const file = fileItem?.file
+
+    if (!file) {
+      showToast('请选择文件')
+      return
+    }
+
+    // 验证文件类型
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+    if (!allowedTypes.includes(file.type)) {
+      showToast('请选择jpg、png或gif格式的图片')
+      return
+    }
+
+    // 验证文件大小（限制5MB）
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      showToast('图片大小不能超过5MB')
+      return
+    }
+
+    // 上传文件
+    const response = await upload({}, file)
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((response as any).data?.code === 0 && (response as any).data?.data) {
+      // 只更新编辑表单中的头像
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      editForm.value.userAvatar = (response as any).data.data
+      showToast('头像上传成功')
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      showToast((response as any).data?.message || '头像上传失败')
+    }
+  } catch (error) {
+    console.error('头像上传失败:', error)
+    showToast('头像上传失败，请重试')
+  } finally {
+    uploadingAvatar.value = false
+  }
 }
 
 // 编辑用户信息
@@ -159,7 +249,7 @@ const updateUserInfo = async () => {
       userAvatar: editForm.value.userAvatar,
     }
 
-    const response = await updateUser(updateRequest)
+    const response = await editeUser(updateRequest)
 
     if (response.data.code === 0) {
       // 更新本地用户信息
@@ -313,10 +403,37 @@ onMounted(async () => {
 
 .user-avatar {
   flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+
+    .avatar-edit-overlay {
+      opacity: 1;
+    }
+  }
 
   :deep(.van-image) {
     border: 3px solid rgba(255, 255, 255, 0.3);
   }
+}
+
+.avatar-edit-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  color: white;
 }
 
 .user-details {
@@ -446,6 +563,21 @@ onMounted(async () => {
 
 .form-footer {
   padding: 0 16px;
+}
+
+// 头像上传样式
+.avatar-upload-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.current-avatar {
+  flex-shrink: 0;
+
+  :deep(.van-image) {
+    border: 2px solid var(--border-color);
+  }
 }
 
 // 响应式设计

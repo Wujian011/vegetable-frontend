@@ -389,6 +389,14 @@ declare namespace API {
     userRole?: string
   }
 
+  type UserEditeRequest = {
+    id?: number
+    userName?: string
+    userAvatar?: string
+    userProfile?: string
+    userRole?: string
+  }
+
   type UserLoginRequest = {
     userAccount?: string
     userPassword?: string

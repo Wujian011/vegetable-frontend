@@ -5,6 +5,7 @@
 import * as shoppingCartController from './shoppingCartController'
 import * as userController from './userController'
 import * as ordersController from './ordersController'
+import * as fileController from './fileController'
 import * as dishesController from './dishesController'
 import * as classificationController from './classificationController'
 import * as orderDetailsController from './orderDetailsController'
@@ -13,6 +14,7 @@ export default {
   shoppingCartController,
   userController,
   ordersController,
+  fileController,
   dishesController,
   classificationController,
   orderDetailsController,
