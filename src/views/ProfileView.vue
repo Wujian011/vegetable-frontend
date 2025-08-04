@@ -23,7 +23,7 @@
             <div class="user-name">{{ userInfo.userName || '未设置昵称' }}</div>
             <div class="user-id">UID: {{ userInfo.userAccount || 'N/A' }}</div>
             <div class="user-role" v-if="userInfo.userRole">
-              <van-tag type="primary" size="mini">
+              <van-tag type="primary">
                 {{ userInfo.userRole === 'admin' ? '管理员' : '用户' }}
               </van-tag>
             </div>
@@ -221,15 +221,42 @@ const handleLogout = async () => {
   }
 }
 
+// 检查是否已登录
+const checkLoginStatus = () => {
+  // 检查用户是否已登录（通过 id 和 userName 判断）
+  if (!userInfo.value.id || userInfo.value.userName === '未登录') {
+    showToast('请先登录')
+    // 跳转到登录页面
+    setTimeout(() => {
+      router.push('/user/login')
+    }, 1000)
+    return false
+  }
+  return true
+}
+
 // 页面初始化
 onMounted(async () => {
   // 如果用户信息不完整，尝试重新获取
   if (!userInfo.value.id) {
     try {
       await loginUserStore.fetchLoginUser()
+      // 重新获取后再次检查登录状态
+      if (!checkLoginStatus()) {
+        return
+      }
     } catch (error) {
       console.error('获取用户信息失败:', error)
+      // 获取用户信息失败，说明未登录，跳转到登录页面
+      showToast('请先登录')
+      setTimeout(() => {
+        router.push('/user/login')
+      }, 1000)
+      return
     }
+  } else {
+    // 已有用户信息，检查是否有效
+    checkLoginStatus()
   }
 })
 </script>
