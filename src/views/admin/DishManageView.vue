@@ -68,24 +68,30 @@
             clearable
           />
 
-          <!-- 菜品图片（预留扩展） -->
+          <!-- 菜品图片 -->
           <van-field name="image" label="菜品图片">
             <template #input>
               <div class="image-upload">
                 <van-uploader
                   v-model="imageList"
-                  :max-count="3"
+                  :max-count="1"
                   :preview-size="80"
+                  :after-read="handleImageUpload"
+                  accept="image/*"
+                  :max-size="5 * 1024 * 1024"
                   preview-cover
                   @delete="onImageDelete"
+                  :loading="uploadingImage"
                 >
                   <template #default>
                     <div class="upload-placeholder">
-                      <van-icon name="plus" size="20" />
-                      <span>上传图片</span>
+                      <van-loading v-if="uploadingImage" size="20" />
+                      <van-icon v-else name="plus" size="20" />
+                      <span>{{ uploadingImage ? '上传中...' : '上传图片' }}</span>
                     </div>
                   </template>
                 </van-uploader>
+                <div class="upload-tip">支持 jpg、png、gif 格式，最大 5MB</div>
               </div>
             </template>
           </van-field>
@@ -127,6 +133,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { showToast, showConfirmDialog } from 'vant'
 import { addDishes, updateDishes, getDishesVoById } from '@/api/dishesController'
 import { getClassificationItem } from '@/api/classificationController'
+import { upload } from '@/api/fileController'
 
 const router = useRouter()
 const route = useRoute()
@@ -144,10 +151,12 @@ const formData = ref<{
   price: number | string
   material: string
   classificationId?: number
+  dishesImage?: string
 }>({
   name: '',
   price: '',
   material: '',
+  dishesImage: '',
 })
 
 // 分类相关
@@ -162,7 +171,9 @@ const categoryColumns = computed(() => {
 })
 
 // 图片上传
-const imageList = ref([])
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const imageList = ref<any[]>([])
+const uploadingImage = ref(false)
 
 // 返回上一页
 const onClickLeft = async () => {
@@ -208,9 +219,70 @@ const onCategoryConfirm = ({
   showCategoryPicker.value = false
 }
 
+// 图片上传处理
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handleImageUpload = async (items: any) => {
+  uploadingImage.value = true
+
+  try {
+    // 获取文件对象
+    const fileItem = Array.isArray(items) ? items[0] : items
+    const file = fileItem?.file
+
+    if (!file) {
+      showToast('请选择文件')
+      return
+    }
+
+    // 验证文件类型
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+    if (!allowedTypes.includes(file.type)) {
+      showToast('请选择jpg、png或gif格式的图片')
+      // 移除不符合要求的文件
+      imageList.value = []
+      return
+    }
+
+    // 验证文件大小（限制5MB）
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      showToast('图片大小不能超过5MB')
+      // 移除不符合要求的文件
+      imageList.value = []
+      return
+    }
+
+    // 上传文件
+    const response = await upload({}, file)
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((response as any).data?.code === 0 && (response as any).data?.data) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      formData.value.dishesImage = (response as any).data.data
+      showToast('图片上传成功')
+
+      // 更新图片列表显示
+      fileItem.url = formData.value.dishesImage
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      showToast((response as any).data?.message || '图片上传失败')
+      // 移除上传失败的文件
+      imageList.value = []
+    }
+  } catch (error) {
+    console.error('图片上传失败:', error)
+    showToast('图片上传失败，请重试')
+    // 移除上传失败的文件
+    imageList.value = []
+  } finally {
+    uploadingImage.value = false
+  }
+}
+
 // 图片删除
 const onImageDelete = (file: unknown, detail: { index: number }) => {
   console.log('删除图片:', file, detail)
+  formData.value.dishesImage = ''
 }
 
 // 表单提交
@@ -232,6 +304,7 @@ const handleSubmit = async () => {
       price: Number(formData.value.price),
       material: formData.value.material,
       classificationId: formData.value.classificationId,
+      dishesImage: formData.value.dishesImage,
     }
 
     if (isEdit.value && formData.value.id) {
@@ -292,7 +365,18 @@ const loadDishData = async () => {
         name: dish.name || '',
         price: dish.price || '',
         material: dish.material || '',
-        classificationId: dish.userId, // 根据实际API字段调整
+        classificationId: dish.userId, // 根据 DishesVO 类型定义使用 userId 字段
+        dishesImage: dish.dishesImage || '',
+      }
+
+      // 如果有图片，设置图片列表
+      if (dish.dishesImage) {
+        imageList.value = [
+          {
+            url: dish.dishesImage,
+            isImage: true,
+          },
+        ]
       }
 
       // 设置分类名称
@@ -360,9 +444,39 @@ onMounted(async () => {
     justify-content: center;
     color: #969799;
     font-size: 12px;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: #07c160;
+      color: #07c160;
+    }
+
+    .van-icon,
+    .van-loading {
+      margin-bottom: 4px;
+    }
+  }
+
+  .upload-tip {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #969799;
+    text-align: center;
+  }
+
+  :deep(.van-uploader__preview) {
+    position: relative;
+
+    .van-uploader__preview-image {
+      border-radius: 4px;
+    }
+  }
+
+  :deep(.van-uploader__preview-delete) {
+    background: rgba(0, 0, 0, 0.7);
 
     .van-icon {
-      margin-bottom: 4px;
+      color: white;
     }
   }
 }

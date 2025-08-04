@@ -156,6 +156,7 @@ declare namespace API {
     name?: string
     price?: number
     material?: string
+    dishesImage?: string
     userId?: number
     editTime?: string
     createTime?: string
@@ -168,6 +169,7 @@ declare namespace API {
     name?: string
     price?: number
     material?: string
+    dishesImage?: string
   }
 
   type DishesQueryRequest = {
@@ -189,6 +191,7 @@ declare namespace API {
     name?: string
     price?: number
     material?: string
+    dishesImage?: string
     userId?: number
   }
 
@@ -197,6 +200,7 @@ declare namespace API {
     name?: string
     price?: number
     material?: string
+    dishesImage?: string
     userId?: number
   }
 
