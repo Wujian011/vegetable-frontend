@@ -126,7 +126,7 @@
             block
             round
             size="large"
-            :loading="submitting"
+            :loading="submitting.value"
             @click="submitOrder"
           >
             提交订单 ¥{{ totalPrice }}
@@ -143,6 +143,7 @@ import { useRouter } from 'vue-router'
 import { showToast, showConfirmDialog } from 'vant'
 import { useCartStore, type CartItem } from '@/stores/cart'
 import { addOrders } from '@/api/ordersController'
+import { usePreventRepeatedClick } from '@/composables/useThrottle'
 
 const router = useRouter()
 const cartStore = useCartStore()
@@ -160,7 +161,7 @@ const orderForm = ref({
 
 // 结算弹窗状态
 const showCheckout = ref(false)
-const submitting = ref(false)
+// 注意：submitting状态将从usePreventRepeatedClick hook获取
 
 // 全选状态
 const selectAll = computed({
@@ -240,10 +241,8 @@ const proceedToCheckout = () => {
   showCheckout.value = true
 }
 
-// 提交订单
-const submitOrder = async () => {
-  submitting.value = true
-
+// 提交订单的原始函数
+const submitOrderOriginal = async () => {
   try {
     // 构建订单数据
     const orderData: API.OrdersAddRequest = {
@@ -278,10 +277,11 @@ const submitOrder = async () => {
   } catch (error) {
     console.error('提交订单失败:', error)
     showToast('订单提交失败，请重试')
-  } finally {
-    submitting.value = false
   }
 }
+
+// 使用防重复点击包装提交订单函数
+const [submitOrder, submitting] = usePreventRepeatedClick(submitOrderOriginal, 1500)
 
 // 页面初始化
 onMounted(() => {

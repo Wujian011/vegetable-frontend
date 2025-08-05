@@ -108,7 +108,7 @@
         type="primary"
         size="large"
         @click="handleSubmit"
-        :loading="submitLoading"
+        :loading="submitLoadingFromHook.value"
         class="submit-btn"
       >
         {{ isEdit ? '保存修改' : '立即添加' }}
@@ -134,6 +134,7 @@ import { showToast, showConfirmDialog } from 'vant'
 import { addDishes, updateDishes, getDishesVoById } from '@/api/dishesController'
 import { getClassificationItem } from '@/api/classificationController'
 import { upload } from '@/api/fileController'
+import { usePreventRepeatedClick } from '@/composables/useThrottle'
 
 const router = useRouter()
 const route = useRoute()
@@ -144,7 +145,7 @@ const dishId = computed(() => route.query.id as string)
 
 // 表单数据
 const formRef = ref()
-const submitLoading = ref(false)
+// 注意：submitLoading将从usePreventRepeatedClick hook获取
 const formData = ref<{
   id?: number
   name: string
@@ -285,8 +286,8 @@ const onImageDelete = (file: unknown, detail: { index: number }) => {
   formData.value.dishesImage = ''
 }
 
-// 表单提交
-const handleSubmit = async () => {
+// 表单提交的原始函数
+const handleSubmitOriginal = async () => {
   try {
     // 表单验证
     await formRef.value?.validate()
@@ -296,8 +297,6 @@ const handleSubmit = async () => {
       showToast('请选择菜品分类')
       return
     }
-
-    submitLoading.value = true
 
     const submitData = {
       name: formData.value.name,
@@ -334,10 +333,11 @@ const handleSubmit = async () => {
   } catch (error) {
     console.error('提交失败:', error)
     showToast('操作失败')
-  } finally {
-    submitLoading.value = false
   }
 }
+
+// 使用防重复点击包装表单提交
+const [handleSubmit, submitLoadingFromHook] = usePreventRepeatedClick(handleSubmitOriginal, 1000)
 
 // 加载分类列表
 const loadCategories = async () => {

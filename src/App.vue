@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import BasicLayout from './layouts/BasicLayout.vue'
+import GlobalLoading from './components/GlobalLoading.vue'
 </script>
 
 <template>
   <BasicLayout />
+  <!-- 全局Loading组件 -->
+  <GlobalLoading />
 </template>
 
 <style>
@@ -15,7 +18,8 @@ import BasicLayout from './layouts/BasicLayout.vue'
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: #f7f8fa;
 }
 

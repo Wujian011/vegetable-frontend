@@ -35,7 +35,7 @@
           block
           type="primary"
           native-type="submit"
-          :loading="loading"
+          :loading="loading.value"
           class="login-button"
         >
           登录
@@ -58,9 +58,10 @@ import { useRouter } from 'vue-router'
 import { showToast, showSuccessToast, showFailToast } from 'vant'
 import { userLogin } from '@/api/userController.ts'
 import { useLoginUserStore } from '@/stores/loginUser.ts'
+import { usePreventRepeatedClick } from '@/composables/useThrottle'
 
 const router = useRouter()
-const loading = ref(false)
+// 注意：loading状态将从usePreventRepeatedClick hook获取
 
 // 表单数据
 const formData = reactive<API.UserLoginRequest>({
@@ -69,10 +70,8 @@ const formData = reactive<API.UserLoginRequest>({
 })
 const loginUserStore = useLoginUserStore()
 
-// 提交登录
-const onSubmit = async (values: API.UserLoginRequest) => {
-  loading.value = true
-
+// 登录的原始函数
+const onSubmitOriginal = async (values: API.UserLoginRequest) => {
   try {
     // 这里应该调用登录API
     console.log('登录数据:', values)
@@ -94,10 +93,11 @@ const onSubmit = async (values: API.UserLoginRequest) => {
     }
   } catch (error) {
     showToast('登录错误，请检查账号密码' + error)
-  } finally {
-    loading.value = false
   }
 }
+
+// 使用防重复点击包装登录函数
+const [onSubmit, loading] = usePreventRepeatedClick(onSubmitOriginal, 1000)
 
 // 跳转到注册页面
 const goToRegister = () => {
