@@ -27,6 +27,17 @@ const router = createRouter({
       name: 'register',
       component: () => import('../views/user/RegisterView.vue'),
     },
+
+    {
+      path: '/join-family/:userId',
+      name: 'joinFamilyByLink',
+      component: () => import('../views/user/JoinFamilyByLinkView.vue'),
+      meta: {
+        hideTabBar: true,
+        hideHeader: true,
+        title: '加入家庭',
+      },
+    },
     {
       path: '/cart',
       name: 'cart',

@@ -1,15 +1,8 @@
 <template>
   <div class="home-page">
-    <!-- 搜索栏 -->
-    <div class="search-section">
-      <van-search
-        v-model="searchValue"
-        placeholder="搜索菜品名称"
-        @search="onSearch"
-        @clear="onClear"
-        background="var(--gray-100)"
-        shape="round"
-      />
+    <!-- 家庭关系展示区域 -->
+    <div class="family-section">
+      <FamilyRelation />
     </div>
 
     <!-- 主要内容区域 -->
@@ -48,7 +41,7 @@
               <van-card
                 :price="dish.price"
                 :title="dish.name"
-                thumb="https://fastly.jsdelivr.net/npm/@vant/assets/ipad.jpeg"
+                :thumb="dish.dishesImage"
                 @click="showDishDetail(dish)"
               >
                 <template #tags>
@@ -92,7 +85,7 @@
         <van-icon name="records" size="20" />
         <div class="info-details">
           <span class="dish-count">{{ currentCategoryInfo }}</span>
-          <span v-if="searchValue" class="search-info">搜索: "{{ searchValue }}"</span>
+          <!-- 搜索信息已移除 -->
         </div>
       </div>
       <div class="admin-actions">
@@ -169,6 +162,7 @@ import { getClassificationItem } from '@/api/classificationController'
 import { listDishesVoByPage, deleteDishes } from '@/api/dishesController'
 import { useLoginUserStore } from '@/stores/loginUser'
 import { useCartStore } from '@/stores/cart'
+import FamilyRelation from '@/components/FamilyRelation.vue'
 
 const router = useRouter()
 
@@ -181,8 +175,7 @@ const isAdmin = computed(() => {
   return loginUserStore.loginUser.userRole === 'admin'
 })
 
-// 搜索相关
-const searchValue = ref('')
+// 搜索功能已移除
 
 // 分类相关
 const activeCategory = ref(0)
@@ -207,12 +200,7 @@ const cartTotalPrice = computed(() => cartStore.cartTotalPrice)
 const currentCategoryInfo = computed(() => {
   const categoryName = categories.value[activeCategory.value]?.name || '全部'
   const dishCount = dishes.value.length
-
-  if (searchValue.value) {
-    return `"${categoryName}"中找到 ${dishCount} 道菜品`
-  } else {
-    return `"${categoryName}"共 ${dishCount} 道菜品`
-  }
+  return `"${categoryName}"共 ${dishCount} 道菜品`
 })
 
 // 获取菜品图片（模拟）
@@ -221,31 +209,11 @@ const getDishImage = (dishId?: number) => {
   return `https://via.placeholder.com/150?text=菜品${dishId}`
 }
 
-// 搜索功能
-const onSearch = (value: string) => {
-  console.log('搜索:', value)
-  currentPage.value = 1
-  dishes.value = []
-  finished.value = false
-  loadDishes()
-}
-
-const onClear = () => {
-  searchValue.value = ''
-  currentPage.value = 1
-  dishes.value = []
-  finished.value = false
-  loadDishes()
-}
+// 搜索功能已移除
 
 // 分类切换
 const onCategoryChange = (index: number) => {
   console.log(index)
-
-  // 如果搜索框有内容，先清空搜索
-  if (searchValue.value) {
-    searchValue.value = ''
-  }
 
   // 重置分页和数据
   currentPage.value = 1
@@ -279,10 +247,7 @@ const loadDishes = async () => {
       pageSize: pageSize.value,
     }
 
-    // 如果有搜索关键词
-    if (searchValue.value) {
-      queryParams.name = searchValue.value
-    }
+    // 搜索功能已移除
 
     // 根据选中的分类筛选（排除"全部"分类，即index为0的情况）
     if (activeCategory.value > 0 && categories.value[activeCategory.value]) {
@@ -419,10 +384,9 @@ onMounted(async () => {
   background-color: var(--bg-color);
 }
 
-.search-section {
-  padding: var(--spacing-lg);
+.family-section {
   background: var(--bg-card);
-  border-bottom: 1px solid var(--border-color);
+  // 家庭关系组件的样式在组件内部定义
 }
 
 .main-content {

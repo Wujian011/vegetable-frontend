@@ -244,6 +244,11 @@ declare namespace API {
     id: number
   }
 
+  type JoinFamilyRequest = {
+    userId?: number
+    coupleRole?: string
+  }
+
   type LoginUserVO = {
     id?: number
     userAccount?: string
@@ -253,6 +258,10 @@ declare namespace API {
     userRole?: string
     createTime?: string
     updateTime?: string
+    partnerUser?: LoginUserVO
+    partnerBindTime?: string
+    inviteCode?: string
+    coupleRole?: string
   }
 
   type OrderDetailsVO = {
@@ -383,6 +392,11 @@ declare namespace API {
     createTime?: string
     updateTime?: string
     isDelete?: number
+    partnerId?: number
+    partnerBindTime?: string
+    inviteCode?: string
+    coupleRole?: string
+    coupleRoleSetTime?: string
   }
 
   type UserAddRequest = {
@@ -398,7 +412,7 @@ declare namespace API {
     userName?: string
     userAvatar?: string
     userProfile?: string
-    userRole?: string
+    coupleRole?: string
   }
 
   type UserLoginRequest = {
@@ -440,5 +454,10 @@ declare namespace API {
     userProfile?: string
     userRole?: string
     createTime?: string
+    partnerId?: number
+    partnerName?: string
+    partnerAvatar?: string
+    partnerBindTime?: string
+    hasPartner?: boolean
   }
 }

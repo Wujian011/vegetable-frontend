@@ -73,11 +73,12 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { showToast, showSuccessToast, showFailToast } from 'vant'
 import { userRegister } from '@/api/userController.ts'
 
 const router = useRouter()
+const route = useRoute()
 const loading = ref(false)
 
 // 表单数据
@@ -103,10 +104,16 @@ const onSubmit = async (values: API.UserRegisterRequest) => {
     const res = await userRegister(values)
     if (res.data.code === 0) {
       showSuccessToast('注册成功')
-      router.push({
-        path: '/user/login',
-        replace: true,
-      })
+      // 注册成功后跳转到登录页，并保持redirect参数
+      const redirectPath = route.query.redirect as string
+      if (redirectPath) {
+        router.push(`/user/login?redirect=${encodeURIComponent(redirectPath)}`)
+      } else {
+        router.push({
+          path: '/user/login',
+          replace: true,
+        })
+      }
     } else {
       showFailToast('注册失败，请检查账号密码 ' + res.data.message)
     }
@@ -119,7 +126,12 @@ const onSubmit = async (values: API.UserRegisterRequest) => {
 
 // 跳转到登录页面
 const goToLogin = () => {
-  router.push('/user/login')
+  const redirectPath = route.query.redirect as string
+  if (redirectPath) {
+    router.push(`/user/login?redirect=${encodeURIComponent(redirectPath)}`)
+  } else {
+    router.push('/user/login')
+  }
 }
 </script>
 

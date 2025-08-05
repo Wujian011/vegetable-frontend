@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    FamilyRelation: typeof import('./src/components/FamilyRelation.vue')['default']
     GlobalFooter: typeof import('./src/components/GlobalFooter.vue')['default']
     GlobalHeader: typeof import('./src/components/GlobalHeader.vue')['default']
     GlobalLoading: typeof import('./src/components/GlobalLoading.vue')['default']

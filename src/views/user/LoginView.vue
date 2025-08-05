@@ -53,14 +53,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { reactive } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { showToast, showSuccessToast, showFailToast } from 'vant'
 import { userLogin } from '@/api/userController.ts'
 import { useLoginUserStore } from '@/stores/loginUser.ts'
 import { usePreventRepeatedClick } from '@/composables/useThrottle'
 
 const router = useRouter()
+const route = useRoute()
 // 注意：loading状态将从usePreventRepeatedClick hook获取
 
 // 表单数据
@@ -83,11 +84,16 @@ const onSubmitOriginal = async (values: API.UserLoginRequest) => {
       await loginUserStore.fetchLoginUser()
       showSuccessToast('登录成功')
 
-      // 登录成功后跳转到首页
-      router.push({
-        path: '/',
-        replace: true,
-      })
+      // 登录成功后跳转
+      const redirectPath = route.query.redirect as string
+      if (redirectPath) {
+        router.push(decodeURIComponent(redirectPath))
+      } else {
+        router.push({
+          path: '/',
+          replace: true,
+        })
+      }
     } else {
       showFailToast('登录失败 ' + res.data.message)
     }
@@ -101,7 +107,12 @@ const [onSubmit, loading] = usePreventRepeatedClick(onSubmitOriginal, 1000)
 
 // 跳转到注册页面
 const goToRegister = () => {
-  router.push('/user/register')
+  const redirectPath = route.query.redirect as string
+  if (redirectPath) {
+    router.push(`/user/register?redirect=${encodeURIComponent(redirectPath)}`)
+  } else {
+    router.push('/user/register')
+  }
 }
 </script>
 
