@@ -17,14 +17,14 @@
             :title="category.name"
           />
         </van-sidebar>
-        <!-- 管理员才显示分类管理按钮 -->
+        <!-- 饲养员才显示分类管理按钮 -->
         <van-button
-          v-if="isAdmin"
+          v-if="isFeeder"
           type="primary"
           round
           size="small"
           class="add-category-button"
-          to="/admin/category"
+          to="/feeder/category"
         >
           分类管理
         </van-button>
@@ -33,7 +33,7 @@
       <!-- 右侧菜品列表 -->
       <div
         class="dishes-content"
-        :class="{ 'has-admin-bar': isAdmin, 'has-cart-bar': !isAdmin && cartItems.length > 0 }"
+        :class="{ 'has-admin-bar': isFeeder, 'has-cart-bar': isFoodie && cartItems.length > 0 }"
       >
         <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了">
           <div class="dishes-grid">
@@ -45,12 +45,12 @@
                 @click="showDishDetail(dish)"
               >
                 <template #tags>
-                  <van-tag v-if="isAdmin" plain type="primary"> 销量: 0</van-tag>
+                  <van-tag v-if="isFeeder" plain type="primary"> 销量: 0</van-tag>
                 </template>
 
                 <template #footer>
-                  <!-- 管理员显示编辑和删除按钮 -->
-                  <div v-if="isAdmin" class="admin-actions">
+                  <!-- 饲养员显示编辑和删除按钮 -->
+                  <div v-if="isFeeder" class="admin-actions">
                     <van-button size="mini" type="primary" @click.stop="goToEditDish(dish)">
                       编辑
                     </van-button>
@@ -59,8 +59,8 @@
                     </van-button>
                   </div>
 
-                  <!-- 普通用户显示加购物车按钮 -->
-                  <div v-else class="user-actions">
+                  <!-- 吃货显示加购物车按钮 -->
+                  <div v-else-if="isFoodie" class="user-actions">
                     <van-button
                       icon="plus"
                       size="small"
@@ -71,6 +71,11 @@
                       加购物车
                     </van-button>
                   </div>
+
+                  <!-- 未绑定家庭关系时显示提示 -->
+                  <div v-else-if="!hasPartner" class="no-partner-tip">
+                    <van-tag type="warning" size="mini">请先绑定家庭关系</van-tag>
+                  </div>
                 </template>
               </van-card>
             </div>
@@ -79,8 +84,8 @@
       </div>
     </div>
 
-    <!-- 管理员：菜品管理底部栏 -->
-    <div v-if="isAdmin" class="admin-bottom-bar">
+    <!-- 饲养员：菜品管理底部栏 -->
+    <div v-if="isFeeder" class="admin-bottom-bar">
       <div class="admin-info">
         <van-icon name="records" size="20" />
         <div class="info-details">
@@ -104,8 +109,8 @@
       </div>
     </div>
 
-    <!-- 用户：购物车管理底部栏 -->
-    <div v-if="!isAdmin" class="cart-bottom-bar">
+    <!-- 吃货：购物车管理底部栏 -->
+    <div v-if="isFoodie" class="cart-bottom-bar">
       <div class="cart-info">
         <van-icon name="shopping-cart-o" size="20" />
         <div class="info-details">
@@ -143,7 +148,7 @@
             <p class="detail-material">原料：{{ selectedDish.material }}</p>
             <div class="detail-price">¥{{ selectedDish.price }}</div>
           </div>
-          <div class="detail-actions" v-if="!isAdmin">
+          <div class="detail-actions" v-if="isFoodie">
             <van-button type="primary" round size="large" @click="addToCart(selectedDish)">
               加入购物车
             </van-button>
@@ -159,9 +164,10 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast, showConfirmDialog } from 'vant'
 import { getClassificationItem } from '@/api/classificationController'
-import { listDishesVoByPage, deleteDishes } from '@/api/dishesController'
+import { listMyFamilyDishesVoByPage, deleteDishes } from '@/api/dishesController'
 import { useLoginUserStore } from '@/stores/loginUser'
 import { useCartStore } from '@/stores/cart'
+import { COUPLE_ROLE } from '@/constants/userRole'
 import FamilyRelation from '@/components/FamilyRelation.vue'
 
 const router = useRouter()
@@ -170,9 +176,17 @@ const router = useRouter()
 const loginUserStore = useLoginUserStore()
 const cartStore = useCartStore()
 
-// 计算是否为管理员
-const isAdmin = computed(() => {
-  return loginUserStore.loginUser.userRole === 'admin'
+// 计算用户角色权限
+const isFeeder = computed(() => {
+  return loginUserStore.loginUser.coupleRole === COUPLE_ROLE.FEEDER
+})
+
+const isFoodie = computed(() => {
+  return loginUserStore.loginUser.coupleRole === COUPLE_ROLE.FOODIE
+})
+
+const hasPartner = computed(() => {
+  return !!loginUserStore.loginUser.hasPartner
 })
 
 // 搜索功能已移除
@@ -254,7 +268,7 @@ const loadDishes = async () => {
       queryParams.classificationId = categories.value[activeCategory.value].id
     }
 
-    const response = await listDishesVoByPage(queryParams)
+    const response = await listMyFamilyDishesVoByPage(queryParams)
 
     if (response.data.code === 0 && response.data.data?.records) {
       const newDishes = response.data.data.records
@@ -323,20 +337,20 @@ const goToCart = () => {
   router.push('/cart')
 }
 
-// 管理员功能：跳转到新增菜品页面
+// 饲养员功能：跳转到新增菜品页面
 const goToAddDish = () => {
-  router.push('/admin/dish/add')
+  router.push('/feeder/dish/add')
 }
 
-// 管理员功能：跳转到编辑菜品页面
+// 饲养员功能：跳转到编辑菜品页面
 const goToEditDish = (dish: API.DishesVO) => {
   router.push({
-    path: '/admin/dish/edit',
+    path: '/feeder/dish/edit',
     query: { id: dish.id },
   })
 }
 
-// 管理员功能：删除菜品
+// 饲养员功能：删除菜品
 const deleteDish = async (dish: API.DishesVO) => {
   try {
     await showConfirmDialog({
@@ -361,9 +375,9 @@ const deleteDish = async (dish: API.DishesVO) => {
   }
 }
 
-// 管理员功能：跳转到菜品排序页面
+// 饲养员功能：跳转到菜品排序页面
 const goToSortDish = () => {
-  router.push('/admin/dish/sort')
+  router.push('/feeder/dish/sort')
 }
 
 // 页面初始化

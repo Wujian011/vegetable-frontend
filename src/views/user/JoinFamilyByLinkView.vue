@@ -103,7 +103,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { showToast } from 'vant'
 import { getUserVoById, joinFamily } from '@/api/userController'
 import { useLoginUserStore } from '@/stores/loginUser'
-import { COUPLE_ROLE_TEXT } from '@/constants/userRole'
+import { COUPLE_ROLE, COUPLE_ROLE_TEXT } from '@/constants/userRole'
 import { usePreventRepeatedClick } from '@/composables/useThrottle'
 
 const router = useRouter()
@@ -118,12 +118,13 @@ const inviterInfo = ref<API.UserVO | null>(null)
 const currentUser = computed(() => loginUserStore.loginUser)
 const isLoggedIn = computed(() => !!currentUser.value.id)
 
-// 邀请者ID
+// 邀请者ID和角色
 const inviterId = computed(() => route.params.userId as string)
+const inviterRole = computed(() => route.query.role as string)
 
 // 获取邀请者角色文本
 const getInviterRoleText = () => {
-  const role = inviterInfo.value?.coupleRole
+  const role = inviterRole.value
   if (role && COUPLE_ROLE_TEXT[role as keyof typeof COUPLE_ROLE_TEXT]) {
     return `${COUPLE_ROLE_TEXT[role as keyof typeof COUPLE_ROLE_TEXT]}，想要与你建立家庭关系`
   }
@@ -133,10 +134,11 @@ const getInviterRoleText = () => {
 // 获取我的角色文本
 const getMyRoleText = () => {
   // 根据邀请者的角色确定我的角色（互补）
-  if (inviterInfo.value?.coupleRole === 'feeder') {
-    return COUPLE_ROLE_TEXT.foodie
-  } else if (inviterInfo.value?.coupleRole === 'foodie') {
-    return COUPLE_ROLE_TEXT.feeder
+  const role = inviterRole.value
+  if (role === COUPLE_ROLE.FEEDER) {
+    return COUPLE_ROLE_TEXT[COUPLE_ROLE.FOODIE]
+  } else if (role === COUPLE_ROLE.FOODIE) {
+    return COUPLE_ROLE_TEXT[COUPLE_ROLE.FEEDER]
   }
   return '家庭成员'
 }
@@ -144,10 +146,11 @@ const getMyRoleText = () => {
 // 获取对应的角色值
 const getMyRole = () => {
   // 角色互补逻辑
-  if (inviterInfo.value?.coupleRole === 'feeder') {
-    return 'foodie'
-  } else if (inviterInfo.value?.coupleRole === 'foodie') {
-    return 'feeder'
+  const role = inviterRole.value
+  if (role === COUPLE_ROLE.FEEDER) {
+    return COUPLE_ROLE.FOODIE
+  } else if (role === COUPLE_ROLE.FOODIE) {
+    return COUPLE_ROLE.FEEDER
   }
   return ''
 }
@@ -155,6 +158,15 @@ const getMyRole = () => {
 // 加载邀请者信息
 const loadInviterInfo = async () => {
   if (!inviterId.value) {
+    loading.value = false
+    return
+  }
+
+  // 验证角色参数是否有效
+  const role = inviterRole.value
+  if (!role || (role !== COUPLE_ROLE.FEEDER && role !== COUPLE_ROLE.FOODIE)) {
+    console.error('邀请链接中的角色参数无效:', role)
+    showToast('邀请链接无效')
     loading.value = false
     return
   }

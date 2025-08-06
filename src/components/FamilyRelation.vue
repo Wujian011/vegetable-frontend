@@ -226,11 +226,11 @@ const bindRelationOriginal = async () => {
     })
 
     if (response.data.code === 0) {
+      // 生成分享链接，包含用户ID和角色信息
+      const shareUrl = `${window.location.origin}/join-family/${currentUser.value.id}?role=${selectedRole.value}`
+
       showBindDialog.value = false
       selectedRole.value = ''
-
-      // 生成分享链接
-      const shareUrl = `${window.location.origin}/join-family/${currentUser.value.id}`
 
       // 复制到剪贴板
       await copyToClipboard(shareUrl)

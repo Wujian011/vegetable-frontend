@@ -25,10 +25,14 @@
           <div class="user-details">
             <div class="user-name">{{ userInfo.userName || '未设置昵称' }}</div>
             <div class="user-id">UID: {{ userInfo.userAccount || 'N/A' }}</div>
-            <div class="user-role" v-if="userInfo.userRole">
+            <!-- 显示家庭角色信息 -->
+            <div class="user-role" v-if="userInfo.hasPartner && userInfo.coupleRole">
               <van-tag type="primary">
-                {{ userInfo.userRole === 'admin' ? '管理员' : '用户' }}
+                {{ COUPLE_ROLE_TEXT[userInfo.coupleRole] }}
               </van-tag>
+            </div>
+            <div class="user-role" v-else-if="!userInfo.hasPartner">
+              <van-tag type="warning"> 未绑定家庭关系 </van-tag>
             </div>
           </div>
           <div class="edit-action">
@@ -46,11 +50,31 @@
 
     <!-- 功能菜单列表 -->
     <div class="menu-section">
-      <van-cell-group>
-        <van-cell title="我的订单" is-link icon="orders-o" @click="goToOrders" />
-        <van-cell title="地址管理" is-link icon="location-o" @click="showDevelopingToast" />
-        <van-cell title="优惠券" is-link icon="coupon-o" @click="showDevelopingToast" />
-        <van-cell title="积分商城" is-link icon="gift-o" @click="showDevelopingToast" />
+      <!-- 吃货角色专属功能 -->
+      <van-cell-group v-if="isFoodie">
+        <van-cell-group title="购物功能">
+          <van-cell title="我的订单" is-link icon="orders-o" @click="goToOrders" />
+          <van-cell title="地址管理" is-link icon="location-o" @click="showDevelopingToast" />
+          <van-cell title="优惠券" is-link icon="coupon-o" @click="showDevelopingToast" />
+          <van-cell title="积分商城" is-link icon="gift-o" @click="showDevelopingToast" />
+        </van-cell-group>
+      </van-cell-group>
+
+      <!-- 饲养员角色专属功能 -->
+      <van-cell-group v-if="isFeeder">
+        <van-cell-group title="管理功能">
+          <van-cell title="分类管理" is-link icon="apps-o" @click="goToCategory" />
+          <van-cell title="菜品管理" is-link icon="records" @click="goToAddDish" />
+          <van-cell title="菜品排序" is-link icon="sort" @click="goToSortDish" />
+        </van-cell-group>
+      </van-cell-group>
+
+      <!-- 通用功能 -->
+      <van-cell-group v-if="hasPartner">
+        <van-cell-group title="家庭功能">
+          <van-cell title="家庭信息" is-link icon="friends-o" @click="showDevelopingToast" />
+          <van-cell title="消费统计" is-link icon="bar-chart-o" @click="showDevelopingToast" />
+        </van-cell-group>
       </van-cell-group>
 
       <van-cell-group>
@@ -148,6 +172,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast, showConfirmDialog } from 'vant'
 import { useLoginUserStore } from '@/stores/loginUser'
+import { COUPLE_ROLE, COUPLE_ROLE_TEXT } from '@/constants/userRole'
 import { editeUser, updateUser, userLogout } from '@/api/userController'
 import { upload } from '@/api/fileController'
 
@@ -156,6 +181,11 @@ const loginUserStore = useLoginUserStore()
 
 // 用户信息
 const userInfo = computed(() => loginUserStore.loginUser)
+
+// 角色权限计算
+const isFeeder = computed(() => userInfo.value.coupleRole === COUPLE_ROLE.FEEDER)
+const isFoodie = computed(() => userInfo.value.coupleRole === COUPLE_ROLE.FOODIE)
+const hasPartner = computed(() => !!userInfo.value.hasPartner)
 
 // 编辑弹窗状态
 const showEditDialog = ref(false)
@@ -281,6 +311,21 @@ const goToOrders = () => {
 // 显示开发中提示
 const showDevelopingToast = () => {
   showToast('功能开发中，敬请期待')
+}
+
+// 饲养员功能：跳转到分类管理
+const goToCategory = () => {
+  router.push('/feeder/category')
+}
+
+// 饲养员功能：跳转到新增菜品
+const goToAddDish = () => {
+  router.push('/feeder/dish/add')
+}
+
+// 饲养员功能：跳转到菜品排序
+const goToSortDish = () => {
+  router.push('/feeder/dish/sort')
 }
 
 // 退出登录

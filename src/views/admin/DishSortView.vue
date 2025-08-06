@@ -88,7 +88,7 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast, showConfirmDialog } from 'vant'
 import Draggable from 'vuedraggable'
-import { listDishesVoByPage } from '@/api/dishesController'
+import { listMyFamilyDishesVoByPage } from '@/api/dishesController'
 import { getClassificationItem } from '@/api/classificationController'
 
 const router = useRouter()
@@ -195,9 +195,9 @@ const loadCategories = async () => {
 // 加载菜品列表
 const loadAllDishes = async () => {
   try {
-    const response = await listDishesVoByPage({
+    const response = await listMyFamilyDishesVoByPage({
       pageNum: 1,
-      pageSize: 1000, // 获取所有菜品
+      pageSize: 1000, // 获取所有家庭菜品
     })
 
     if (response.data.code === 0 && response.data.data?.records) {

@@ -56,6 +56,21 @@ export async function getDishesVoById(
   })
 }
 
+/** 此处后端没有提供注释 POST /dishes/list/page/my/family/vo */
+export async function listMyFamilyDishesVoByPage(
+  body: API.DishesQueryRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponsePageDishesVO>('/dishes/list/page/my/family/vo', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
 /** 此处后端没有提供注释 POST /dishes/list/page/vo */
 export async function listDishesVoByPage(
   body: API.DishesQueryRequest,
